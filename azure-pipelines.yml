@@ -23,3 +23,23 @@ steps:
     inputs:
       command: 'install'
       workingDir: '$(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0'
+
+  # Paso 3: Ejecutar Linter (ESLint)
+  - script: |
+      npm run lint
+    displayName: 'Run Linter (ESLint)'
+
+  # Paso 4: Ejecutar Formatter (Prettier)
+  - script: |
+      npm run prettier
+    displayName: 'Run Formatter (Prettier)'
+
+  # Paso 5: Ejecutar Test (Jest)
+  - script: |
+      CI=true npm run test
+    displayName: 'Run Tests (Jest)'
+
+  # Paso 6: Ejecutar Build
+  - script: |
+      npm run build
+    displayName: 'Run Build'
