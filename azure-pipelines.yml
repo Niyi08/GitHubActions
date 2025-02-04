@@ -16,29 +16,30 @@ steps:
   inputs:
     checkLatest: true
 
-# Cambiar al directorio "Codebase" donde está package.json
+# Cambiar al directorio "codebase"
 - script: |
-    cd Codebase  # Navega a la carpeta donde está package.json
+    echo "Changing directory to 'codebase'"
+    cd $(Build.SourcesDirectory)/codebase  # Navega al directorio correcto
     npm install
   displayName: 'Install dependencies'
 
 - script: |
-    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar el linter
+    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para el linter
     npm run lint
   displayName: 'Run Linter (ESLint)'
 
 - script: |
-    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar Prettier
+    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para Prettier
     npm run prettier
   displayName: 'Run Formatter (Prettier)'
 
 - script: |
-    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar las pruebas
+    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para las pruebas
     CI=true npm run test
   displayName: 'Run Tests (Jest)'
 
 - script: |
-    cd Codebase  # Navega a la carpeta "Codebase" para construir el proyecto
+    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para la construcción
     npm run build
   displayName: 'Build Project'
 
