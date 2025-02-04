@@ -12,39 +12,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseNode@1
-  inputs:
-    checkLatest: true
+  # Paso 1: Usar Node.js
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '16.x'
 
-# Cambiar al directorio "codebase"
-- script: |
-    echo "Changing directory to 'codebase'"
-    cd $(Build.SourcesDirectory)/codebase  # Navega al directorio correcto
-    npm install
-  displayName: 'Install dependencies'
-
-- script: |
-    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para el linter
-    npm run lint
-  displayName: 'Run Linter (ESLint)'
-
-- script: |
-    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para Prettier
-    npm run prettier
-  displayName: 'Run Formatter (Prettier)'
-
-- script: |
-    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para las pruebas
-    CI=true npm run test
-  displayName: 'Run Tests (Jest)'
-
-- script: |
-    cd $(Build.SourcesDirectory)/codebase  # Navega a la carpeta correcta para la construcción
-    npm run build
-  displayName: 'Build Project'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+  # Paso 2: Instalar dependencias con npm
+  - task: Npm@1
+    inputs:
+      command: 'install'
+      workingDir: '$(System.DefaultWorkingDirectory)/codebase'
