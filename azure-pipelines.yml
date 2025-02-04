@@ -12,27 +12,33 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseNode@1  # Usamos la versión 1 que es más estable
+- task: UseNode@1
   inputs:
     checkLatest: true
 
+# Cambiar al directorio "Codebase" donde está package.json
 - script: |
+    cd Codebase  # Navega a la carpeta donde está package.json
     npm install
   displayName: 'Install dependencies'
 
 - script: |
+    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar el linter
     npm run lint
   displayName: 'Run Linter (ESLint)'
 
 - script: |
+    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar Prettier
     npm run prettier
   displayName: 'Run Formatter (Prettier)'
 
 - script: |
+    cd Codebase  # Navega a la carpeta "Codebase" para ejecutar las pruebas
     CI=true npm run test
   displayName: 'Run Tests (Jest)'
 
 - script: |
+    cd Codebase  # Navega a la carpeta "Codebase" para construir el proyecto
     npm run build
   displayName: 'Build Project'
 
