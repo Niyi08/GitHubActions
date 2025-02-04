@@ -12,11 +12,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  # Paso 1: Usar Node.js
+  # Paso 1: Usar Node.js versión 15.x
   - task: NodeTool@0
     inputs:
       versionSource: 'spec'
-      versionSpec: '16.x'
+      versionSpec: '15.x'
 
   # Paso 2: Instalar dependencias con npm
   - task: Npm@1
