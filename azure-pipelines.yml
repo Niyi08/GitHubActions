@@ -1,32 +1,43 @@
 trigger:
   branches:
     exclude:
-      - main  # This ensures it only runs on Pull Requests, not direct pushes to main
+      - "*"
 
 pr:
   branches:
     include:
-      - '*'  # Runs on any Pull Request
+      - "*"
 
 pool:
-  vmImage: 'ubuntu-latest'  # Using a Linux VM for CI
+  vmImage: 'ubuntu-latest'
 
 steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '18.x'  # Use Node.js 18
+- task: UseNode@1  # Usamos la versión 1 que es más estable
+  inputs:
+    checkLatest: true
 
-  - script: npm install
-    displayName: 'Install Dependencies'
+- script: |
+    npm install
+  displayName: 'Install dependencies'
 
-  - script: npm run lint
-    displayName: 'Run ESLint'
+- script: |
+    npm run lint
+  displayName: 'Run Linter (ESLint)'
 
-  - script: npm run prettier
-    displayName: 'Run Prettier Formatter'
+- script: |
+    npm run prettier
+  displayName: 'Run Formatter (Prettier)'
 
-  - script: CI=true npm run test
-    displayName: 'Run Jest Tests'
+- script: |
+    CI=true npm run test
+  displayName: 'Run Tests (Jest)'
 
-  - script: npm run build
-    displayName: 'Build Application'
+- script: |
+    npm run build
+  displayName: 'Build Project'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
