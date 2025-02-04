@@ -1,0 +1,32 @@
+trigger:
+  branches:
+    exclude:
+      - main  # This ensures it only runs on Pull Requests, not direct pushes to main
+
+pr:
+  branches:
+    include:
+      - '*'  # Runs on any Pull Request
+
+pool:
+  vmImage: 'ubuntu-latest'  # Using a Linux VM for CI
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'  # Use Node.js 18
+
+  - script: npm install
+    displayName: 'Install Dependencies'
+
+  - script: npm run lint
+    displayName: 'Run ESLint'
+
+  - script: npm run prettier
+    displayName: 'Run Prettier Formatter'
+
+  - script: CI=true npm run test
+    displayName: 'Run Jest Tests'
+
+  - script: npm run build
+    displayName: 'Build Application'
