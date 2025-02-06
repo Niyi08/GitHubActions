@@ -28,5 +28,5 @@ COPY --from=build /app/build /app/build
 # Expone el puerto 8080
 EXPOSE 8080
 
-# Comando para iniciar el servidor
-CMD ["serve", "-s", "/app/build", "-l", "8080"]
+# Comando para iniciar la aplicación
+CMD ["npm", "start"]
