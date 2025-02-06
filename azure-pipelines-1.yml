@@ -50,3 +50,5 @@ stages:
         imageToDeploy: 'myapp'
         containerAppName: 'challengecontainer'
         resourceGroup: 'FullStackL'
+        targetPort: '8080'
+        ingress: 'external'
