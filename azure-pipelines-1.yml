@@ -39,6 +39,7 @@ stages:
           $(tag)
     
     - task: AzureContainerApps@1
+      displayName: Deploy to Azure Container Apps
       inputs:
         azureSubscription: 'Azure for Students(1)(0095e18a-d16b-49ce-a344-9fd1269979fb)'
         acrName: 'challenge'
@@ -48,5 +49,4 @@ stages:
         imageToBuild: 'myapp'
         imageToDeploy: 'myapp'
         containerAppName: 'challengecontainer'
-        resourceGroup: 'challenge''
-    
+        resourceGroup: 'challenge'  # Fixed extra single quote issue here
