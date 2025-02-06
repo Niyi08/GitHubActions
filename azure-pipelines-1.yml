@@ -73,7 +73,7 @@ stages:
             --resource-group $(resourceGroup) \
             --environment $(containerAppEnvName) \
             --image $(ACR_LOGIN_SERVER)/myapp:latest \
-            --target-port 8080 \  # Asegúrate de que este puerto sea el correcto (8080)
+            --target-port 8080 \
             --ingress external \
             --cpu 0.5 \
             --memory 1.0Gi \
