@@ -14,6 +14,7 @@ variables:
   imageRepository: 'myapp'
   containerRegistry: 'challenge.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/codebase/rdicidr-0.1.0/Dockerfile'
+  ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"
   tag: '$(Build.BuildId)'
 
   # Agent VM image name
@@ -37,3 +38,13 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+    
+    - task: AzureContainerApps@1
+      inputs:
+        azureSubscription: 'Azure for Students(0095e18a-d16b-49ce-a344-9fd1269979fb)'
+        acrName: 'Challenge'
+        acrUsername: 'Challenge'
+        acrPassword: '8Uj7MopGqAyH8iLe6es3hsud9EoM37XevQcHBnFOku+ACRA/nrZ2'
+        dockerfilePath: '$(dockerfilePath)'
+        imageToBuild: 'myapp'
+        imageToDeploy: 'myapp'
