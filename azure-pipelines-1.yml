@@ -14,7 +14,12 @@ variables:
   imageRepository: 'myapp'
   containerRegistry: 'challenge.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/codebase/rdicidr-0.1.0/Dockerfile'
-  tag: '$(Build.BuildId)'
+  ACR_NAME: "challenge"  # Nombre del Azure Container Registry
+  resourceGroup: "FullStackL"  # Nombre del grupo de recursos en Azure
+  containerAppEnvName: "proyecto-app-environment"  # Nombre del entorno de Azure Container Apps
+  lawID: "6dab0d25-73b8-465f-ad46-0cdaa4e95387"  # ID del Log Analytics Workspace (LAW) de Azure
+  location: "eastus"  # Región de Azure donde se desplegarán los recursos
+  ACR_LOGIN_SERVER: "$(ACR_NAME).azurecr.io"  # URL del Azure Container Registry
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -27,28 +32,52 @@ stages:
     displayName: Build
     pool:
       vmImage: $(vmImageName)
-    steps:
+    steps:  
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Azure for Students(2)(0095e18a-d16b-49ce-a344-9fd1269979fb)'  # Suscripción de Azure for Students
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          ACR_USERNAME=$(az acr credential show --name $(ACR_NAME) --query "username" -o tsv)
+          ACR_PASSWORD=$(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" -o tsv)
+          echo "##vso[task.setvariable variable=ACR_USERNAME]$ACR_USERNAME"
+          echo "##vso[task.setvariable variable=ACR_PASSWORD]$ACR_PASSWORD"
+      displayName: 'Get ACR Credentials'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Azure for Students(2)(0095e18a-d16b-49ce-a344-9fd1269979fb)'  # Suscripción de Azure for Students
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az acr login --name $(ACR_NAME)'
+      displayName: 'Login to Azure Container Registry (ACR)'
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-    
-    - task: AzureContainerApps@1
-      displayName: Deploy to Azure Container Apps
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '$(Build.SourcesDirectory)/codebase/rdicidr-0.1.0/Dockerfile'
+        tags: 'latest'
+
+    - task: AzureCLI@2
       inputs:
-        azureSubscription: 'Azure for Students(1)(0095e18a-d16b-49ce-a344-9fd1269979fb)'
-        acrName: 'challenge'
-        acrUsername: 'challenge'
-        acrPassword: '/cBBS63vRfnzF0iAzGldAy7VI2W7I8Z0LOV63WKguI+ACRAY8fW7'
-        dockerfilePath: '$(Build.SourcesDirectory)/codebase/rdicidr-0.1.0/Dockerfile'
-        imageToBuild: 'myapp'
-        imageToDeploy: 'myapp'
-        containerAppName: 'challengecontainer'
-        resourceGroup: 'FullStackL'
-        targetPort: '8080'
-        ingress: 'external'
+        azureSubscription: 'Azure for Students(2)(0095e18a-d16b-49ce-a344-9fd1269979fb)'  # Suscripción de Azure for Students
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az containerapp create \
+            --name backend-test \
+            --resource-group $(resourceGroup) \
+            --environment $(containerAppEnvName) \
+            --image $(ACR_LOGIN_SERVER)/myapp:latest \
+            --target-port 8080 \  # Asegúrate de que este puerto sea el correcto (8080)
+            --ingress external \
+            --cpu 0.5 \
+            --memory 1.0Gi \
+            --registry-server $(ACR_LOGIN_SERVER) \
+            --registry-username $(ACR_USERNAME) \
+            --registry-password $(ACR_PASSWORD)
+      displayName: 'Deploy to Azure Container Apps'
