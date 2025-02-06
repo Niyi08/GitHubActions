@@ -1,20 +1,20 @@
-# Usa una imagen base de Node.js
+# Usamos una imagen base oficial de Node.js
 FROM node:14
 
-# Definir el directorio de trabajo dentro del contenedor
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar los archivos package.json y package-lock.json
-COPY codebase/rdicidr-0.1.0/package*.json /app/
+# Copiar los archivos de package.json y package-lock.json al contenedor
+COPY package*.json ./
 
 # Instalar las dependencias
 RUN npm install
 
-# Copiar el resto de la aplicación
-COPY codebase/rdicidr-0.1.0/ /app/
+# Copiar el resto del código de la aplicación
+COPY . .
 
-# Exponer el puerto que usará la aplicación
+# Exponer el puerto en el que la aplicación correrá
 EXPOSE 8080
 
-# Definir el comando para iniciar la aplicación
+# Comando para iniciar la aplicación
 CMD ["npm", "start"]
