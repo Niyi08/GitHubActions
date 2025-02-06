@@ -1,32 +1,20 @@
-# Usa una imagen base de Node.js para la construcción
-FROM node:15-alpine AS build
+# Usa una imagen base de Node.js
+FROM node:14
 
-# Establece el directorio de trabajo
+# Definir el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia package.json y package-lock.json
-COPY package*.json ./
+# Copiar los archivos package.json y package-lock.json
+COPY codebase/rdicidr-0.1.0/package*.json /app/
 
-# Instala dependencias
+# Instalar las dependencias
 RUN npm install
 
-# Copia el código fuente
-COPY . .
+# Copiar el resto de la aplicación
+COPY codebase/rdicidr-0.1.0/ /app/
 
-# Construye la aplicación
-RUN npm run build
-
-# Usa una imagen más ligera para servir los archivos
-FROM node:15-alpine
-
-# Instala `serve`
-RUN npm install -g serve
-
-# Copia la aplicación desde la imagen de construcción
-COPY --from=build /app/build /app/build
-
-# Expone el puerto 8080
+# Exponer el puerto que usará la aplicación
 EXPOSE 8080
 
-# Comando para iniciar la aplicación
+# Definir el comando para iniciar la aplicación
 CMD ["npm", "start"]
