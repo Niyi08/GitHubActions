@@ -1,21 +1,32 @@
-FROM node:15 as builder
+# Usa una imagen base de Node.js para la construcción
+FROM node:15-alpine AS build
 
-WORKDIR
+# Establece el directorio de trabajo
+WORKDIR /app
 
-COPY
+# Copia package.json y package-lock.json
+COPY package*.json ./
 
-RUN 
+# Instala dependencias
+RUN npm install
 
-COPY
+# Copia el código fuente
+COPY . .
 
-RUN 
+# Construye la aplicación
+RUN npm run build
 
-FROM
+# Usa una imagen más ligera para servir los archivos
+FROM node:15-alpine
 
-WORKDIR
+# Instala `serve`
+RUN npm install -g serve
 
-COPY
+# Copia la aplicación desde la imagen de construcción
+COPY --from=build /app/build /app/build
 
-RUN 
+# Expone el puerto 8080
+EXPOSE 8080
 
-ENTRYPOINT 
+# Comando para iniciar el servidor
+CMD ["serve", "-s", "/app/build", "-l", "8080"]
