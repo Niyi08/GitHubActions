@@ -49,4 +49,4 @@ stages:
         imageToBuild: 'myapp'
         imageToDeploy: 'myapp'
         containerAppName: 'challengecontainer'
-        resourceGroup: 'challenge'  # Fixed extra single quote issue here
+        resourceGroup: 'FullStackL'
