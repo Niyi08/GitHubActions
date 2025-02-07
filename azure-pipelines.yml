@@ -1,0 +1,41 @@
+trigger:
+ branches:
+   include:
+     - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '15.x'
+
+  - task: Npm@1
+    inputs:
+      command: 'install'
+      workingDir: '$(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0'
+
+  - script: |
+      cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && npm run lint
+    displayName: 'Run ESLint'
+
+  - script: |
+      cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && npm run prettier
+    displayName: 'Run Prettier'
+  
+  - script: |
+      cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && CI=true npm run test
+    displayName: 'Run Tests'
+  
+  - script: |
+      cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && npm run build
+    displayName: 'Run Build'
+
+
