@@ -27,7 +27,7 @@ steps:
   displayName: 'Run ESLint'
 
 - script: |
-    cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && npm run Prettier
+    cd $(System.DefaultWorkingDirectory)/codebase/rdicidr-0.1.0 && npm run prettier
   displayName: 'Run Prettier'
 
 - script: |
