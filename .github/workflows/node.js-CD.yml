@@ -3,7 +3,7 @@ name: Build and Push Docker Image to ACR
 on:
   push:
     branches:
-      - main  # Cambia esta rama según tu flujo de trabajo
+      - main  # Puedes cambiar esta rama según tus necesidades
   pull_request:
     branches:
       - main
@@ -13,9 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Paso 1: Checkout del código
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # Paso 2: Iniciar sesión en Azure usando las credenciales del Service Principal
     - name: Log in to Azure
       uses: azure/login@v1
       with:
@@ -23,17 +25,20 @@ jobs:
         client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
+    # Paso 3: Iniciar sesión en Azure Container Registry (ACR)
     - name: Log in to ACR
-      uses: azure/container-actions/login@v1
+      uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.AZURE_ACR_NAME }}.azurecr.io
         username: ${{ secrets.AZURE_CLIENT_ID }}
         password: ${{ secrets.AZURE_CLIENT_SECRET }}
 
+    # Paso 4: Construir la imagen Docker usando el Dockerfile
     - name: Build Docker image
       run: |
         docker build -t ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/my-image:${{ github.sha }} .
 
+    # Paso 5: Subir la imagen a Azure Container Registry (ACR)
     - name: Push Docker image to ACR
       run: |
         docker push ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/my-image:${{ github.sha }}
