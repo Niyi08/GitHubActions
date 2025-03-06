@@ -4,14 +4,14 @@ FROM node:14
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar los archivos de package.json y package-lock.json al contenedor
-COPY package.json .
+# Copiar el archivo package.json desde la ubicación correcta
+COPY ./codebase/rdicidr-0.1.0/package.json . 
 
 # Instalar las dependencias
 RUN npm install
 
 # Copiar el resto del código de la aplicación
-COPY . .
+COPY ./codebase/rdicidr-0.1.0 . 
 
 # Exponer el puerto en el que la aplicación correrá
 EXPOSE 8080
