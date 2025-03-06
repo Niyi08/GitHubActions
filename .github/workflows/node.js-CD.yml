@@ -34,7 +34,7 @@ jobs:
     # Paso 4: Construir la imagen Docker usando el Dockerfile
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/my-image:${{ github.sha }} .
+        docker build -f ./codebase/rdicidr-0.1.0/Dockerfile ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/my-image:${{ github.sha }} .
 
     # Paso 5: Subir la imagen a Azure Container Registry (ACR)
     - name: Push Docker image to ACR
