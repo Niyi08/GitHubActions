@@ -19,11 +19,9 @@ jobs:
 
     # Paso 2: Iniciar sesión en Azure usando las credenciales del Service Principal
     - name: Log in to Azure
-      uses: azure/login@v1
+      uses: azure/login@v1  # Usamos la versión 1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  # El secreto que contiene el JSON con las credenciales
 
     # Paso 3: Iniciar sesión en Azure Container Registry (ACR)
     - name: Log in to ACR
